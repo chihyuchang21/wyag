@@ -1,18 +1,22 @@
-import argparse
-import collections
+import argparse #To parse command line arguments
+import collections # OrderedDict
+import configparser
 from datetime import datetime
-import grp
-import pwd
-from fnmatch import fnmatch
-import hashlib
+
+# To read the users/group DB on Unix
+import grp #Group
+import pwd #Users
+
+from fnmatch import fnmatch # Support .gitignore: match filenames against patterns like *.txt.
+import hashlib # Git uses the SHA-1 function quite extensively
 from math import ceil
-import os
-import re
-import sys
-import zlib
+import os # Provide nice filesystem abstraction routines
+import re # Regular Expression
+import sys  # access the actual command-line arguments
+import zlib # Git compresses everything using zlib
 
 argparser = argparse.ArgumentParser(description="The stupidest content tracker")
-argsubparsers = argparser.add_subparsers(title= "Commands", dest= "command")
+argsubparsers = argparser.add_subparsers(title= "Commands", dest= "command") # handle subcommands (as in git: init, commit, etc.
 argsubparsers.required = True
 
 def main(argv=sys.argv[1:]):
