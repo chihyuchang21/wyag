@@ -101,5 +101,3 @@ def repo_default_config():
 
     return ret
 
-# git init
-argsp = argsubparsers.add_parser("")

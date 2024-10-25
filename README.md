@@ -34,3 +34,7 @@ This project is based on the tutorial ["Write Yourself a Git"](https://wyag.thb.
     cd /mnt/c/Users/yourusername/Desktop/myfolder
     python3 libwyag.py
     ```
+2. When testing the function, remember to add "python3" in the front, for example: 
+    ```sh
+    python3 wyag init test
+    ```
