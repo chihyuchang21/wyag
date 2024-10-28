@@ -1,5 +1,84 @@
-import configparser
-import os
+import argparse  # for parsing commandline arguments
+import sys
+import collections  # for OrderedDict
+import configparser  # for parsing .ini config file
+import hashlib  # for SHA-1
+import os  # for handling paths
+import re  # for regular expression
+import zlib  # for compression
+
+argparser = argparse.ArgumentParser(description="The stupidest content tracker")
+argsubparsers = argparser.add_subparsers(title= "Commands", dest= "command") # handle subcommands (as in git: init, commit, etc.
+argsubparsers.required = True
+
+# 3.2: git init
+argsp = argsubparsers.add_parser("init", help="Initialize a new, empty repository.")
+argsp.add_argument("path",
+                   metavar="directory",
+                   nargs="?",
+                   default=".",
+                   help="Where to create the repository.")
+
+# 4.6: git cat-file
+argsp = argsubparsers.add_parser("cat-file",
+                                 help="Provide content of repository objects")
+
+argsp.add_argument("type",
+                   metavar="type",
+                   choices=["blob", "commit", "tag", "tree"],
+                   help="Specify the type")
+
+argsp.add_argument("object",
+                   metavar="object",
+                   help="The object to display")
+
+
+# 4.7: git hash-object
+argsp = argsubparsers.add_parser(
+    "hash-object",
+    help="Compute object ID and optionally creates a blob from a file")
+
+argsp.add_argument("-t",
+                   metavar="type",
+                   dest="type",
+                   choices=["blob", "commit", "tag", "tree"],
+                   default="blob",
+                   help="Specify the type")
+
+argsp.add_argument("-w",
+                   dest="write",
+                   action="store_true",
+                   help="Actually write the object into the database")
+
+argsp.add_argument("path",
+                   help="Read object from <file>")
+
+
+def main(argv=sys.argv[1:]):
+    args = argparser.parse_args(argv)
+    match args.command:
+        # case "add"          : cmd_add(args)
+        case "cat-file"     : cmd_cat_file(args)
+        # case "check-ignore" : cmd_check_ignore(args)
+        # case "checkout"     : cmd_checkout(args)
+        # case "commit"       : cmd_commit(args)
+        # case "hash-object"  : cmd_hash_object(args)
+        case "init"         : cmd_init(args)
+        # case "log"          : cmd_log(args)
+        # case "ls-files"     : cmd_ls_files(args)
+        # case "ls-tree"      : cmd_ls_tree(args)
+        # case "rev-parse"    : cmd_rev_parse(args)
+        # case "rm"           : cmd_rm(args)
+        # case "show-ref"     : cmd_show_ref(args)
+        # case "status"       : cmd_status(args)
+        # case "tag"          : cmd_tag(args)
+        case _              : print("Bad command.")
+
+
+def cmd_init(args):
+    repo_create(args.path)
+
+
 
 class GitRepository (object):
     """A git repository"""
@@ -200,3 +279,50 @@ def object_write(obj, repo=None):
                 f.write(zlib.compress(result))
     return sha
 
+#############################################################
+# wyag cat-file
+# usage: wyag cat-file <type> <object>
+#############################################################
+
+
+def cmd_cat_file(args):
+    repo = repo_find()
+    cat_file(repo, args.object, fmt=args.type.encode())
+
+def cat_file(repo, obj, fmt=None):
+    obj = object_read(repo, object_find(repo, obj, fmt=fmt))
+    sys.stdout.buffer.write(obj.serialize())
+
+def object_find(repo, name, fmt=None, follow=True):
+    return name
+
+
+#############################################################
+# wyag hash-object
+# usage: wyag hash-object [-w] [-t <type>] <file>
+#############################################################
+
+
+def cmd_hash_object(args):
+    if args.write:
+        repo = repo_find()
+    else:
+        repo = None
+
+    with open(args.path, "rb") as fd:
+        sha = object_hash(fd, args.type.encode(), repo)
+        print(sha)
+
+def object_hash(fd, fmt, repo=None):
+    """ Hash object, writing it to repo if provided."""
+    data = fd.read()
+
+    # Choose constructor according to fmt argument
+    match fmt:
+        case b'commit' : obj=GitCommit(data)
+        case b'tree'   : obj=GitTree(data)
+        case b'tag'    : obj=GitTag(data)
+        case b'blob'   : obj=GitBlob(data)
+        case _: raise Exception("Unknown type %s!" % fmt)
+
+    return object_write(obj, repo)
