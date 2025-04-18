@@ -8,7 +8,7 @@ That's why I followed the excellent [WYAG tutorial](https://wyag.thb.lt/) to lea
 
 ---
 
-## 📦 Features
+## Features
 
 WYAG supports a subset of Git's core commands, implemented in pure Python:
 
@@ -32,7 +32,7 @@ WYAG supports a subset of Git's core commands, implemented in pure Python:
 
 ---
 
-## 🚀 Quick Start
+## Quick Start
 
 ```bash
 # Initialize a repo
@@ -48,7 +48,7 @@ python ../wyag.py commit -m "First commit"
 ```
 
 
-### 🧠 Reflections & Notes
+## Reflections & Notes
 
 - **`argparse`**: This project makes extensive use of `argparse` to support subcommands like `init`, `add`, `commit`, etc.—just like Git CLI. I learned how to structure subcommands with `add_subparsers()` and assign arguments per command in a clean, scalable way.
 - **Repository structure**: I now understand how Git initializes and organizes its `.git` folder: including how `HEAD`, `config`, `refs/heads`, and `objects` are constructed and connected.
