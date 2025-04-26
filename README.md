@@ -1,6 +1,6 @@
 # WYAG — Write Your A Git
 
-**WYAG** (short for “Write Your A** Git”) is a minimal reimplementation of Git written in Python.  
+**WYAG** (short for “Write Your A Git”) is a minimal reimplementation of Git written in Python.  
 In large-scale enterprise environments where thousands of developers frequently contribute to shared codebases, 
 following the team’s Git workflows is critical—especially for new engineers. 
 For me, understanding the **underlying logic and mechanics behind Git operations** is key to building confidence and contributing effectively.  
